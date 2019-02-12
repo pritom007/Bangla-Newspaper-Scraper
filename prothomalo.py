@@ -1,4 +1,4 @@
-# create by Pritom on 2019-02-12
+# created by Pritom on 2019-02-12
 # encoding=utf8
 import os
 import json
@@ -58,6 +58,7 @@ for i in range(delta.days + 1):
                 link_separator = link.get('href').split('/')
                 link = link_separator[1] + "/" +link_separator[2] + "/" + link_separator[3]
                 article_url = newspaper_base_url + link
+                print ("Article URL: ", article_url)
                 article_data = requests.get(article_url)
                 article_soup = BeautifulSoup(article_data.content, "html.parser")
 
@@ -106,9 +107,6 @@ for i in range(delta.days + 1):
                 article_title = article_soup.find("h1", {"class": "title"})
                 article_body = article_soup.find("div", {"itemprop": "articleBody"})
 
-                # print("Title:" + str(article_title.text.strip()))
-                # print("URL:" + article_url.strip())
-                # print("Content: " + article_body.text.strip())
                 json_dict['title'] = article_title.text.strip()
                 json_dict['url'] = article_url.strip()
                 json_dict['article'] = article_body.text.strip()
