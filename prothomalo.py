@@ -1,10 +1,18 @@
-# create by Sakib Rahman on 2019-02-10
+# create by Pritom on 2019-02-12
 # encoding=utf8
 import os
 import json
 from datetime import date, timedelta
 from bs4 import BeautifulSoup
 import requests
+
+# simple function for translating a bengali number to english number
+def commment_num(num):
+    eng_num =""
+    num_dict={'১':1,'২':2,'৩':3,'৪':4,'৫':6,'৬':6,'৭':7,'৮':8,'৯':9,'০':0}
+    for i in num:
+        eng_num = eng_num + str(num_dict.get(i))
+    return eng_num
 
 newspaper_base_url = 'http://www.prothom-alo.com/'
 newspaper_archive_base_url = 'http://www.prothom-alo.com/archive/'
@@ -62,14 +70,14 @@ for i in range(delta.days + 1):
                     print("No Author")
 
                 try:
-                    date_published = article_soup.find("span", {"itemprop": "datePublished"}).text
-                    json_dict['publish_date'] = date_published
+                    date_published = article_soup.find("span", {"itemprop": "datePublished"})
+                    json_dict['publish_date'] = date_published.get("content")
                 except:
                     print("No published date")
 
                 try:
-                    date_modified = article_soup.find("span", {"itemprop": "dateModified"}).text
-                    json_dict['modification_date'] = date_modified
+                    date_modified = article_soup.find("span", {"itemprop": "dateModified"})
+                    json_dict['modification_date'] = date_modified.get("content")
                 except:
                     print("No Modification")
 
@@ -84,10 +92,15 @@ for i in range(delta.days + 1):
                     print("No Tag Found")
 
                 try:
-                    commnent_count = article_soup.find("a", {"class": "comment_count"}).text
-                    json_dict['comment_count'] =  commnent_count
+                    comment_count = article_soup.find("a", {"class": "comment_count"}).text
+                    json_dict['comment_count'] =  commment_num(comment_count)
                 except:
                     json_dict['comment_count'] = 0
+                try:
+                    summary = article_soup.find("div", {"class": "palo_web_news_div_orange"}).text
+                    json_dict['summary'] = summary
+                except:
+                    json_dict['summary'] = "No Summary Found"
 
                 article_content = article_soup.find_all("div", {"class": "content_detail"})
                 article_title = article_soup.find("h1", {"class": "title"})
